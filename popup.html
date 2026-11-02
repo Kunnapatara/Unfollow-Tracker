@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #ffffff;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #E1306C, #F56040);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .logo .icon {
+      margin-right: 4px;
+    }
+    .pro-badge {
+      background: linear-gradient(135deg, #E1306C, #F56040);
+      color: white;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 10px;
+    }
+    .btn-primary {
+      background: #0095f6;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0, 149, 246, 0.3);
+    }
+    .btn-primary:hover { background: #0077cc; transform: translateY(-1px); }
+    .btn-upgrade {
+      background: white;
+      color: #E1306C;
+      border: 1.5px solid #E1306C;
+    }
+    .btn-upgrade:hover { background: #E1306C; color: white; }
+    .btn-upgrade.early-bird {
+      background: linear-gradient(135deg, #E1306C, #F56040);
+      color: white;
+      border: none;
+    }
+    .btn-upgrade.early-bird:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-stop {
+      background: #f0f0f0;
+      color: #333;
+      border: none;
+      margin-top: 4px;
+    }
+    .btn-stop:hover { background: #e0e0e0; }
+    .status {
+      font-size: 13px;
+      color: #8e8e8e;
+      text-align: center;
+      margin: 12px 0;
+    }
+    .result-box {
+      background: #fafafa;
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid #efefef;
+      display: none;
+      margin-top: 8px;
+    }
+    .result-header {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    #unfollowList {
+      font-size: 13px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    #unfollowList a {
+      color: #0095f6;
+      text-decoration: none;
+      display: inline-block;
+      margin: 2px 0;
+    }
+    #unfollowList a:hover { text-decoration: underline; }
+    .blurred {
+      filter: blur(4px);
+      cursor: pointer;
+      transition: filter 0.2s;
+      display: inline-block;
+      user-select: none;
+    }
+    .blurred:hover { filter: blur(2px); }
+    .paywall-box {
+      margin-top: 10px;
+      padding: 10px;
+      background: linear-gradient(135deg, rgba(225,48,108,0.05), rgba(245,96,64,0.05));
+      border: 1px solid rgba(225,48,108,0.2);
+      border-radius: 12px;
+      text-align: center;
+    }
+    .paywall-box p {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      color: #555;
+    }
+    .btn-inline-upgrade {
+      display: inline-block;
+      background: linear-gradient(135deg, #E1306C, #F56040);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-inline-upgrade:hover { opacity: 0.9; }
+    .limit-select {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .limit-select label { font-size: 12px; color: #666; white-space: nowrap; }
+    select {
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 12px;
+      flex: 1;
+    }
+    .early-bird-notice {
+      font-size: 11px;
+      color: #E1306C;
+      text-align: center;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo"><span class="icon">🔍</span> UNFOLLOW TRACKER</div>
+    <div id="proBadge" class="pro-badge" style="display: none;">PRO</div>
+  </div>
+
+  <div class="limit-select">
+    <label>🔢 Max scan:</label>
+    <select id="maxLimitSelect">
+      <option value="500">500</option>
+      <option value="1000" selected>1,000</option>
+      <option value="2000">2,000</option>
+      <option value="0">Unlimited (Pro)</option>
+    </select>
+  </div>
+
+  <button id="scanBtn" class="btn btn-primary">📸 Start Scanning Followers</button>
+  <button id="stopBtn" class="btn btn-stop" style="display: none;">⏹ Stop Scanning</button>
+  <button id="upgradeBtn" class="btn btn-upgrade">💎 Upgrade to Pro</button>
+
+  <div id="earlyBirdNotice" class="early-bird-notice" style="display:none;"></div>
+
+  <div id="statusText" class="status">✨ Open your Followers list on Instagram, then click Scan</div>
+
+  <div id="resultBox" class="result-box">
+    <div class="result-header">📊 Current followers: <span id="count">0</span></div>
+    <div id="unfollowList"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
